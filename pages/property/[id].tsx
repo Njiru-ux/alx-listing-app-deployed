@@ -1,57 +1,65 @@
 // pages/property/[id].tsx
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import PropertyDetail from "@/components/property/PropertyDetail";
-import { Property } from "@/types/property";
+import ReviewSection from "@/components/property/ReviewSection";
+import type { Property } from "@/types/property";
 
 export default function PropertyDetailPage() {
   const router = useRouter();
   const { id } = router.query;
+
+  // Ensure we have a stable string id (router.query can be string | string[] | undefined)
+  const propertyId = Array.isArray(id) ? id[0] : id;
+
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id) return;
-    
-    setLoading(true);
-    setError(null);
+    if (!propertyId) return;
 
-    fetch(`/api/properties/${id}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Property not found');
-        }
-        return response.json();
-      })
-      .then(data => {
+    const fetchProperty = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await fetch(`/api/properties/${propertyId}`);
+        if (!res.ok) throw new Error("Property not found");
+
+        const data: Property = await res.json();
         setProperty(data);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err: any) {
         console.error("Error fetching property:", err);
-        setError(err.message || "Failed to load property");
+        setError(err?.message || "Failed to load property");
+        setProperty(null);
+      } finally {
         setLoading(false);
-      });
-  }, [id]);
+      }
+    };
 
+    fetchProperty();
+  }, [propertyId]);
+
+  // Loading state
   if (loading) {
     return (
       <>
         <Head>
-          <title>Loading Property... | ALX Listing App</title>
+          <title>Loading Property… | ALX Listing App</title>
         </Head>
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mb-4"></div>
-            <p className="text-xl text-gray-600">Loading property details...</p>
+            <p className="text-xl text-gray-600">Loading property details…</p>
           </div>
         </div>
       </>
     );
   }
 
+  // Error or missing data
   if (error || !property) {
     return (
       <>
@@ -77,10 +85,10 @@ export default function PropertyDetailPage() {
               {error || "Property not found"}
             </h2>
             <p className="text-gray-600 mb-6">
-              The property you're looking for doesn't exist or has been removed.
+              The property you’re looking for doesn’t exist or has been removed.
             </p>
             <button
-              onClick={() => router.push('/')}
+              onClick={() => router.push("/")}
               className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               Back to Home
@@ -91,13 +99,22 @@ export default function PropertyDetailPage() {
     );
   }
 
+  // Success: Render details + dynamic reviews
   return (
     <>
       <Head>
         <title>{property.title} | ALX Listing App</title>
         <meta name="description" content={property.description} />
       </Head>
+
       <PropertyDetail property={property} />
+
+      {/* Reviews: only render if we have a valid id */}
+      {propertyId && (
+        <div className="max-w-5xl mx-auto px-4">
+          <ReviewSection propertyId={propertyId} />
+        </div>
+      )}
     </>
   );
 }
