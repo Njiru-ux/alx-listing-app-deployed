@@ -1,5 +1,4 @@
-// components/property/ReviewSection.tsx
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 
 type Review = {
@@ -21,8 +20,10 @@ export default function ReviewSection({ propertyId }: { propertyId: string }) {
     const fetchReviews = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/api/properties/${propertyId}/reviews`);
-        if (!cancelled) setReviews(res.data || []);
+        const res = await fetch(`/api/properties/${propertyId}/reviews`);
+        if (!res.ok) throw new Error('Failed to fetch reviews');
+        const data = await res.json();
+        if (!cancelled) setReviews(data || []);
       } catch (e) {
         console.error("Error fetching reviews:", e);
         if (!cancelled) setError("Failed to load reviews.");
