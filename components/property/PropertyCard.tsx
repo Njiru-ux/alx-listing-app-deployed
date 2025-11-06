@@ -1,4 +1,3 @@
-// components/property/PropertyCard.tsx
 import Image from "next/image";
 import Link from "next/link";
 import { PropertyCardProps } from "@/types/property";
