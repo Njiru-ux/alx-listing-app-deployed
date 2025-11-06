@@ -6,7 +6,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <Link href={`/properties/${property.id}`}>
-        {/* Property Image */}
         <div className="relative h-48 w-full bg-gray-200">
           <Image
             src={property.image}
@@ -16,7 +15,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           
-          {/* Rating Badge */}
           {property.rating && (
             <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md shadow-sm flex items-center gap-1">
               <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -27,7 +25,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           )}
         </div>
 
-        {/* Property Details */}
         <div className="p-4">
           <h3 className="text-xl font-semibold mb-2 text-gray-900 line-clamp-1">
             {property.title}
@@ -37,7 +34,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             {property.description}
           </p>
 
-          {/* Location */}
           <div className="flex items-center text-gray-500 text-sm mb-3">
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -46,7 +42,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <span className="truncate">{property.location}</span>
           </div>
 
-          {/* Bedrooms and Bathrooms */}
           {(property.bedrooms || property.bathrooms) && (
             <div className="flex gap-4 text-sm text-gray-600 mb-3">
               {property.bedrooms && (
@@ -68,7 +63,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             </div>
           )}
 
-          {/* Price */}
           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
             <div>
               <span className="text-2xl font-bold text-blue-600">${property.price}</span>
