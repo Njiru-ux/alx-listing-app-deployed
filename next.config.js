@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: { unoptimized: true }, // <- forces the browser to load the URL directly
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '**' } // tighten to specific domains when you know them
+    ]
+  }
 };
 module.exports = nextConfig;
